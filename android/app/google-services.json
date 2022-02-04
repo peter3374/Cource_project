@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "152421257219",
+    "project_id": "colledgear2",
+    "storage_bucket": "colledgear2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:152421257219:android:708d4c8b90b6037fd03e36",
+        "android_client_info": {
+          "package_name": "com.example.colledgear2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "152421257219-5bhmdl76i3qorhaq4aovrksu0f2o8qg0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwxu1zHSOkPZu2VwTd-D10b-fHF1BpuHk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "152421257219-5bhmdl76i3qorhaq4aovrksu0f2o8qg0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
