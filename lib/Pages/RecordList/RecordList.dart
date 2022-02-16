@@ -1,20 +1,31 @@
 // ignore_for_file: file_names
 
+import 'dart:developer';
+
 import 'package:cAR/Pages/RecordList/RecordListModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-class RecordList extends StatelessWidget {
-  // const RecordList({Key? key}) : super(key: key);
+class RecordList extends StatefulWidget {
+  @override
+  State<RecordList> createState() => _RecordListState();
+}
+
+class _RecordListState extends State<RecordList> {
+  late Stream<QuerySnapshot> _firebaseData;
 
   @override
-  Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> users = FirebaseFirestore.instance
+  void initState() {
+    super.initState();
+    _firebaseData = FirebaseFirestore.instance
         .collection('scores')
         .orderBy('score', descending: true) // from the biggest to lower.
         .snapshots();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -24,10 +35,14 @@ class RecordList extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: StreamBuilder<QuerySnapshot<dynamic>>(
-            stream: users,
-            // stream: FirebaseFirestore.instance.collection('scores').snapshots(),
+            stream: _firebaseData, // still error
             builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              final data = snapshot.requireData;
+              var data;
+              try {
+                data = snapshot.data;
+              } catch (e) {
+                log('$e');
+              }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Text('Подгружаю');
@@ -44,7 +59,7 @@ class RecordList extends StatelessWidget {
                 );
               } else {
                 return ListView.builder(
-                    itemCount: data.size,
+                    itemCount: data!.size,
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
                       return TaskWidget(

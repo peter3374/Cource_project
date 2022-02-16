@@ -13,7 +13,7 @@ void main() async {
   final appDocDir = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDocDir.path);
 
-  await Hive.openBox('name');
+  await Hive.openBox('user_data'); // name;
   await Firebase.initializeApp();
   runApp(MyApp());
 }

@@ -4,7 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class MenuModel {
+abstract class MenuModel {
   static const List<Color> iconColors = [
     Colors.purpleAccent,
     // Colors.blueAccent,

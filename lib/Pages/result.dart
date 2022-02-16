@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:cAR/CustomButton/CustomButton.dart';
@@ -6,6 +7,8 @@ import 'package:cAR/Pages/RecordList/RecordList.dart';
 import 'package:cAR/model/testResult.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:confetti/confetti.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -40,36 +43,65 @@ class _ResultTestState extends State<ResultTest> {
     if (TestResultModel.testResult == 6) {
       _confettiController.play();
     }
+
     // hive
-    var box = Hive.box('name');
-    _textEditingController.text = box.get('nickname');
+    _textEditingController.text = Hive.box('user_data').get('nickname');
   }
 
-  Future<bool> _updateUser() async {
-    var querySnapshot =
-        await FirebaseFirestore.instance.collection('scores').get();
-    for (var queryDocumentSnapshot in querySnapshot.docs) {
-      Map<String, dynamic> data = queryDocumentSnapshot.data();
-      var name = data['name'];
+  // Future<bool> _updateUser() async {
+  //   var querySnapshot =
+  //       await FirebaseFirestore.instance.collection('scores').get();
 
-      List users = name.toString().split(' ');
-      for (int i = 0; i < users.length; i++) {
-        if (_textEditingController.text == users[i].toString()) {
-          print('found !');
-          print('same user ${users[i]}');
-          FirebaseFirestore.instance
-              .collection('scores')
-              .doc('bRkXz0RBjWZeyctf1rTA')
-              .update({
-            'score': TestResultModel.testResult,
-            'name': _textEditingController.text,
-          });
-          print('Updated user');
-          return true;
-        }
-      }
-    }
-    return false;
+  //   for (var queryDocumentSnapshot in querySnapshot.docs) {
+  //     Map<String, dynamic> data = queryDocumentSnapshot.data();
+  //     var name = data['name'];
+
+  //     List users = name.toString().split(' ');
+  //     for (int i = 0; i < users.length; i++) {
+  //       if (_textEditingController.text == users[i].toString()) {
+  //         print('found !');
+  //         print('same user ${users[i]}');
+
+  //         FirebaseFirestore.instance
+  //             .collection('scores')
+  //             .doc('bRkXz0RBjWZeyctf1rTA')
+  //             .update({
+  //           'score': TestResultModel.testResult,
+  //           'name': _textEditingController.text,
+  //         });
+  //         print('Updated user');
+  //         return true;
+  //       }
+  //     }
+  //   }
+  //   return false;
+  // }
+
+  Future<bool> _updateUser2() async {
+    // Date now - ${DateFormat('yMd').format(DateTime.now())}
+    var collection = await FirebaseFirestore.instance.collection('scores');
+    // update
+    collection.doc('${Hive.box('user_data').get('id')}').update({
+      'date': '${DateFormat('yMd').format(DateTime.now())}',
+      'score': TestResultModel.testResult,
+    }).then((value) => ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Обновлено'))));
+    return true;
+  }
+
+  Future<void> _pushData() async {
+    await FirebaseFirestore.instance
+        .collection('scores')
+        .doc('${Hive.box('user_data').get('id')}')
+        .set({
+      'name': _textEditingController.text,
+      'date': DateFormat('yMd').format(DateTime.now()).toString(),
+      'score': TestResultModel.testResult,
+      'correctedFrom': 6 - TestResultModel.testResult
+    }).then((value) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Сохранено')));
+    }).catchError((error) => print('Error on push data!'));
   }
 
   @override
@@ -157,24 +189,24 @@ class _ResultTestState extends State<ResultTest> {
                     } else {
                       if (_textEditingController.text.length > 5 &&
                           TestResultModel.testResult > 0) {
-                        final updateResult = _updateUser();
+                        final updateResult = _updateUser2();
                         if (updateResult == true) {
-                    
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Обновлено')));
                         } else {
-                          users.add({
-                            'name': _textEditingController.text,
-                            'date': DateFormat('yMd')
-                                .format(DateTime.now())
-                                .toString(),
-                            'score': TestResultModel.testResult,
-                            'correctedFrom': 6 - TestResultModel.testResult
-                          }).then((value) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Сохранено')));
-                          }).catchError(
-                              (error) => print('Error on push data!'));
+                          _pushData();
+                          // users.add({
+                          //   'name': _textEditingController.text,
+                          //   'date': DateFormat('yMd')
+                          //       .format(DateTime.now())
+                          //       .toString(),
+                          //   'score': TestResultModel.testResult,
+                          //   'correctedFrom': 6 - TestResultModel.testResult
+                          // }).then((value) {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //       const SnackBar(content: Text('Сохранено')));
+                          // }).catchError(
+                          //     (error) => print('Error on push data!'));
                         }
                       }
                     }
@@ -185,6 +217,12 @@ class _ResultTestState extends State<ResultTest> {
                   method: () {
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => RecordList()));
+                  },
+                  icon: Icons.arrow_back_ios_new_outlined),
+              CustomButton(
+                  text: 'Обновить до 6 ',
+                  method: () {
+                    _updateUser2();
                   },
                   icon: Icons.arrow_back_ios_new_outlined),
               CustomButton(

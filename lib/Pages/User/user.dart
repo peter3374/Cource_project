@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -34,7 +35,6 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   // const UserProfile({ Key? key }) : super(key: key);
-  var box = Hive.box('name');
 
   List<String> rndImageList = [
     'https://www.youredm.com/wp-content/uploads/2019/03/Graham-John-Bell-for-Insomniac-Events-1.jpg',
@@ -65,12 +65,12 @@ class _UserProfileState extends State<UserProfile> {
       }
     });
     // for output
-    final nickName = box.get(
+    final nickName = Hive.box('user_data').get(
       'nickname',
     );
-    int appRunned = box.get('appRunned') ?? 0;
-    int arRunned = box.get('arRunned') ?? 0;
-    int testRunned = box.get('testRunned') ?? 0;
+    int appRunned = Hive.box('user_data').get('appRunned') ?? 0;
+    int arRunned = Hive.box('user_data').get('arRunned') ?? 0;
+    int testRunned = Hive.box('user_data').get('testRunned') ?? 0;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -85,24 +85,44 @@ class _UserProfileState extends State<UserProfile> {
             Center(
                 child: Stack(
               children: [
-                CircleAvatar(
-                  maxRadius: 100,
-                  backgroundImage: NetworkImage('${rndImageList[rnd]}'),
+                const CircleAvatar(
+                  backgroundColor: Colors.black,
+                  maxRadius: 70,
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 90,
+                  ),
+                  //    backgroundImage: NetworkImage('${rndImageList[rnd]}'),
                 ),
                 Positioned(
                   right: 20,
-                  top: 150,
+                  top: 80,
                   child: CircleAvatar(
-                    maxRadius: 20,
+                    maxRadius: 16,
                     backgroundColor: onlineColor,
                   ),
                 ),
               ],
             )),
             Text(
-              'Имя: $nickName',
+              'Логин: $nickName',
               style: TextStyle(color: Colors.white),
             ),
+            const SizedBox(
+              height: 10,
+            ),
+            RaisedButton(
+                color: Colors.blue,
+                child: Text(
+                  'Обновить пароль',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () {
+                  FirebaseAuth.instance.currentUser!.updatePassword('');
+                }),
+            // userCredential.user!.updatePassword('');
+
             const SizedBox(
               height: 10,
             ),
@@ -113,10 +133,10 @@ class _UserProfileState extends State<UserProfile> {
             const SizedBox(
               height: 10,
             ),
-            Text(
-              'Создан профиль: ${DateFormat('yMd').format(DateTime.now())}',
-              style: TextStyle(color: Colors.white),
-            ),
+            // Text(
+            //   'Создан профиль: ${FirebaseAuth.instance.currentUser.photoURL}',
+            //   style: TextStyle(color: Colors.white),
+            // ),
             const SizedBox(
               height: 10,
             ),

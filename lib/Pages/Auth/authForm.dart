@@ -111,15 +111,15 @@ class _AuthState extends State<Auth> {
       _showSnackBar('Введите корректно почту.');
     } else {
       try {
+        
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
                 email: _emailController.text,
                 password: _passwordController.text);
         widget.onSignIn(userCredential.user);
-
-        // hive
-        var box = Hive.box('name');
-        box.put('nickname', _emailController.text);
+        // when registrated save id;
+        Hive.box('user_data').put('id', FirebaseAuth.instance.currentUser!.uid);
+        Hive.box('user_data').put('nickname', _emailController.text);
       } on FirebaseAuthException catch (e) {
         setState(() {
           if (e.toString().contains(
@@ -151,8 +151,8 @@ class _AuthState extends State<Auth> {
     } else {
       try {
         // hive
-        var box = Hive.box('name');
-        box.put('nickname', _emailController.text);
+        // var box = Hive.openBox('user_data');
+        Hive.box('user_data').put('nickname', _emailController.text);
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(
                 email: _emailController.text,

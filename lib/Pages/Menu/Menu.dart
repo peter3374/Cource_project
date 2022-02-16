@@ -32,10 +32,10 @@ class _MenuState extends State<Menu> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    var box = Hive.box('name');
+  
 
-    if (box.get('arRunned') == null) {
-      box.put('arRunned', 1);
+    if (Hive.box('user_data').get('arRunned') == null) {
+      Hive.box('user_data').put('arRunned', 1);
     }
   }
 
@@ -49,7 +49,7 @@ class _MenuState extends State<Menu> {
     widget.onSignOut(ll);
   }
 
-  var box = Hive.box('name');
+  var box = Hive.openBox('user_data');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,10 +116,10 @@ class _MenuState extends State<Menu> {
                             switch (_selectedIndex) {
                               case 0:
                                 try {
-                                  int appRunned = box.get('arRunned') ?? 0;
+                                  int appRunned = Hive.box('user_data').get('arRunned') ?? 0;
                                   ;
                                   appRunned++;
-                                  box.put('arRunned', appRunned);
+                                  Hive.box('user_data').put('arRunned', appRunned);
 
                                   DeviceApps.openApp('com.NoStudio.ColledgeAR');
                                 } catch (e) {
@@ -133,16 +133,16 @@ class _MenuState extends State<Menu> {
                                 break;
 
                               case 1:
-                                int testRunned = box.get('testRunned') ?? 0;
+                                int testRunned = Hive.box('user_data').get('testRunned') ?? 0;
                                 testRunned++;
-                                box.put('testRunned', testRunned);
+                                Hive.box('user_data').put('testRunned', testRunned);
 
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => const QuizzScreen()));
                                 break;
                               case 2:
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>  RecordList()));
+                                    builder: (context) => RecordList()));
                                 break;
                               // case 3:
                               //   Navigator.of(context).push(MaterialPageRoute(

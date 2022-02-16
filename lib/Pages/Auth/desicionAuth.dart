@@ -2,23 +2,31 @@
 // ignore: file_names
 // ignore_for_file: file_names
 
+import 'dart:developer';
+
 import 'package:cAR/Pages/Auth/authForm.dart';
 import 'package:cAR/Pages/Menu/Menu.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class DecisionTree extends StatefulWidget {
-  //const DecisionTree({Key? key}) : super(key: key);
+  const DecisionTree({Key? key}) : super(key: key);
   @override
   State<DecisionTree> createState() => _DecisionTreeState();
 }
 
 class _DecisionTreeState extends State<DecisionTree> {
+
+
   @override
   void initState() {
     super.initState();
-    var box = Hive.box('name');
+    
+    var box = Hive.box('user_data');
     int appRunned = box.get('appRunned') ?? 0;
     appRunned++;
     box.put('appRunned', appRunned);

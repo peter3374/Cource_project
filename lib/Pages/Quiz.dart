@@ -28,73 +28,19 @@ class _QuizzScreenState extends State<QuizzScreen> {
   @override
   void initState() {
     super.initState();
-    customTimer();
+
     _controller = PageController(initialPage: 0);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+ 
 
-  int _time = 40;
-  Timer? timer;
-  bool _isCanceled = false;
-
-  void customTimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _time--;
-
-        if (_time == 0 || _isCanceled == true) {
-          timer.cancel();
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('Время вышло!')));
-
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => Menu(
-                    onSignOut: (arg) {},
-                  )));
-        }
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        automaticallyImplyLeading: false, // remove back button
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        toolbarHeight: 70,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.4),
-              borderRadius: const BorderRadius.only(
-                  bottomRight: Radius.circular(20),
-                  bottomLeft: Radius.circular(20))),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'Осталось : $_time сек.',
-                  style: const TextStyle(color: Colors.white, fontSize: 23),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+     
       body: Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
@@ -205,9 +151,8 @@ class _QuizzScreenState extends State<QuizzScreen> {
                               questions.length - 1) {
                             TestResultModel.testResult = score;
                             TestResultModel.testIsDone = true;
-                            _isCanceled = true;
-                            print(_isCanceled);
-                            await Future.delayed(const Duration(seconds: 1));
+                          
+                         
 
                             Navigator.push(
                                 context,
