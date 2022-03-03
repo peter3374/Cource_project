@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:cAR/Pages/Auth/authForm.dart';
+import 'package:cAR/Widgets/dialogs.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -34,17 +37,8 @@ class _UserProfileState extends State<UserProfile> {
     _subscription.cancel();
   }
 
-  // const UserProfile({ Key? key }) : super(key: key);
-
-  List<String> rndImageList = [
-    'https://www.youredm.com/wp-content/uploads/2019/03/Graham-John-Bell-for-Insomniac-Events-1.jpg',
-    'https://steamuserimages-a.akamaihd.net/ugc/912414619787869094/35B2177C29BA2B94FE9C5200094D87411EB430B6/?imw=512&amp;imh=341&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true',
-    'https://www.ixbt.com/img/n1/news/2020/7/0/Science_BillGates_1174744356_large.jpg',
-    'https://insdrcdn.com/media/attachments/a/88/9e0ff288a.jpg'
-  ];
-
-  final rnd = Random().nextInt(3);
-  Color onlineColor = Colors.greenAccent;
+  TextEditingController _passwordController = TextEditingController();
+  Color _onlineColor = Colors.greenAccent;
   @override
   Widget build(BuildContext context) {
     final _subscription = Connectivity()
@@ -56,27 +50,29 @@ class _UserProfileState extends State<UserProfile> {
           result == ConnectivityResult.ethernet ||
           result == ConnectivityResult.wifi) {
         setState(() {
-          onlineColor = Colors.greenAccent;
+          _onlineColor = Colors.greenAccent;
         });
       } else {
         setState(() {
-          onlineColor = Colors.redAccent;
+          _onlineColor = Colors.redAccent;
         });
       }
     });
     // for output
     final nickName = Hive.box('user_data').get(
-      'nickname',
+      'email',
     );
+    bool _showTextField = false;
+
     int appRunned = Hive.box('user_data').get('appRunned') ?? 0;
     int arRunned = Hive.box('user_data').get('arRunned') ?? 0;
     int testRunned = Hive.box('user_data').get('testRunned') ?? 0;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Привет, $nickName'),
+        title: Text('Привет, ${Hive.box('user_data').get('nickname')}'),
       ),
-      body: Container(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(
@@ -100,34 +96,36 @@ class _UserProfileState extends State<UserProfile> {
                   top: 80,
                   child: CircleAvatar(
                     maxRadius: 16,
-                    backgroundColor: onlineColor,
+                    backgroundColor: _onlineColor,
                   ),
                 ),
               ],
             )),
             Text(
-              'Логин: $nickName',
+              'Логин: ${Hive.box('user_data').get(
+                'email',
+              )}',
               style: TextStyle(color: Colors.white),
             ),
             const SizedBox(
               height: 10,
             ),
-            RaisedButton(
-                color: Colors.blue,
-                child: Text(
-                  'Обновить пароль',
-                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {
-                  FirebaseAuth.instance.currentUser!.updatePassword('');
-                }),
+            Text(
+              'Пароль: ${Hive.box('user_data').get(
+                'password',
+              )}',
+              style: TextStyle(color: Colors.white),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
             // userCredential.user!.updatePassword('');
 
             const SizedBox(
               height: 10,
             ),
             Text(
-              onlineColor == Colors.redAccent ? 'В сети: Нет' : 'В сети: ДА',
+              _onlineColor == Colors.redAccent ? 'В сети: Нет' : 'В сети: ДА',
               style: TextStyle(color: Colors.white),
             ),
             const SizedBox(
@@ -141,23 +139,67 @@ class _UserProfileState extends State<UserProfile> {
               height: 10,
             ),
             Text(
-              'Количество попыток сдать тест: $testRunned',
-              style: TextStyle(color: Colors.white),
+              'Количество попыток сдать тест: ${Hive.box('user_data').get('testRunned') ?? 0}',
+              style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(
               height: 10,
             ),
             Text(
-              'Количество посещений музея: $arRunned',
-              style: TextStyle(color: Colors.white),
+              'Количество посещений музея: ${Hive.box('user_data').get('arRunned') ?? 0}',
+              style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(
               height: 10,
             ),
             Text(
-              'Количество запусков приложения: $appRunned',
-              style: TextStyle(color: Colors.white),
+              'Количество запусков приложения: ${Hive.box('user_data').get('appRunned') ?? 0}',
+              style: const TextStyle(color: Colors.white),
             ),
+//             Padding(
+//               padding: const EdgeInsets.all(8.0),
+//               child: CustomTextField(
+//                 isHiddenText: false,
+//                 icon: Icons.lock,
+//                 hintText: 'Новый Пароль:',
+//                 textEditingController: _passwordController,
+//               ),
+//             ),
+
+//             RaisedButton(
+//                 color: Colors.blue,
+//                 child: Text(
+//                   'Обновить пароль',
+//                   style: TextStyle(color: Colors.white),
+//                 ),
+//                 onPressed: () {
+//                   setState(() {
+//                      if(_passwordController.text.length>=6){
+// abstract class CustomDialogsCollection {
+//                        FirebaseAuth.instance.currentUser!.updatePassword(_passwordController.text).then((value) => CustomDialogsCollection.showCustomSnackBar('Обновлено'));
+//                      }
+
+//                   });
+//                   //
+//                 }),
+
+            // RaisedButton(
+            //   onPressed: () {
+            //     List<int> test = List.generate(10, (index) => index + 1);
+            //     Hive.box('user_data')
+            //         .put('list', test)
+            //         .then((value) => print('saved'));
+            //   },
+            //   child: Text('Save list in db'),
+            // ),
+            // RaisedButton(
+            //   onPressed: () {
+            //     List test = List.generate(10, (index) => index + 1);
+            //     var l = Hive.box('user_data').get('list');
+            //     print(l);
+            //   },
+            //   child: Text('Get'),
+            // ),
           ],
         ),
       ),

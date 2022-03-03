@@ -2,14 +2,10 @@
 // ignore: file_names
 // ignore_for_file: file_names
 
-import 'dart:developer';
-
 import 'package:cAR/Pages/Auth/authForm.dart';
 import 'package:cAR/Pages/Menu/Menu.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cAR/Pages/Setup/setupPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -20,12 +16,10 @@ class DecisionTree extends StatefulWidget {
 }
 
 class _DecisionTreeState extends State<DecisionTree> {
-
-
   @override
   void initState() {
     super.initState();
-    
+
     var box = Hive.box('user_data');
     int appRunned = box.get('appRunned') ?? 0;
     appRunned++;
@@ -47,16 +41,34 @@ class _DecisionTreeState extends State<DecisionTree> {
     });
   }
 
+  Future<bool> _getVisitedTime() async {
+    if (Hive.box('user_data').get('isFirstTime') == null) {
+      
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (user == null) {
       return Auth(
+        // auth
         onSignIn: (userCredential) => onRefresh(userCredential),
       );
     } else {
-      return Menu(
-        onSignOut: (userCred) => onRefresh(userCred),
-      );
+      return FutureBuilder(
+          future: _getVisitedTime(),
+          builder: (context, snapshots) {
+            if (snapshots.data == true) {
+              return SetupPage();
+            } else {
+              return Menu(
+                onSignOut: (userCred) => onRefresh(userCred),
+              );
+            }
+          });
     }
   }
 }

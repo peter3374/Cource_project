@@ -1,17 +1,20 @@
 import 'dart:developer';
 import 'dart:ui';
 
-import 'package:cAR/CustomButton/CustomButton.dart';
+import 'package:cAR/Widgets/CustomButton.dart';
 import 'package:cAR/Pages/Menu/Menu.dart';
 import 'package:cAR/Pages/RecordList/RecordList.dart';
+import 'package:cAR/Widgets/dialogs.dart';
 import 'package:cAR/model/testResult.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:confetti/confetti.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ResultTest extends StatefulWidget {
   const ResultTest({Key? key}) : super(key: key);
@@ -48,44 +51,18 @@ class _ResultTestState extends State<ResultTest> {
     _textEditingController.text = Hive.box('user_data').get('nickname');
   }
 
-  // Future<bool> _updateUser() async {
-  //   var querySnapshot =
-  //       await FirebaseFirestore.instance.collection('scores').get();
-
-  //   for (var queryDocumentSnapshot in querySnapshot.docs) {
-  //     Map<String, dynamic> data = queryDocumentSnapshot.data();
-  //     var name = data['name'];
-
-  //     List users = name.toString().split(' ');
-  //     for (int i = 0; i < users.length; i++) {
-  //       if (_textEditingController.text == users[i].toString()) {
-  //         print('found !');
-  //         print('same user ${users[i]}');
-
-  //         FirebaseFirestore.instance
-  //             .collection('scores')
-  //             .doc('bRkXz0RBjWZeyctf1rTA')
-  //             .update({
-  //           'score': TestResultModel.testResult,
-  //           'name': _textEditingController.text,
-  //         });
-  //         print('Updated user');
-  //         return true;
-  //       }
-  //     }
-  //   }
-  //   return false;
-  // }
-
   Future<bool> _updateUser2() async {
     // Date now - ${DateFormat('yMd').format(DateTime.now())}
     var collection = await FirebaseFirestore.instance.collection('scores');
     // update
-    collection.doc('${Hive.box('user_data').get('id')}').update({
-      'date': '${DateFormat('yMd').format(DateTime.now())}',
+    collection
+        .doc(
+            '${Hive.box('user_data').get('${Hive.box('user_data').get('id')}')}')
+        .update({
+      'date': DateFormat('yMd').format(DateTime.now()),
       'score': TestResultModel.testResult,
     }).then((value) => ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Обновлено'))));
+            .showSnackBar(const SnackBar(content: Text('Обновлено'))));
     return true;
   }
 
@@ -97,7 +74,7 @@ class _ResultTestState extends State<ResultTest> {
       'name': _textEditingController.text,
       'date': DateFormat('yMd').format(DateTime.now()).toString(),
       'score': TestResultModel.testResult,
-      'correctedFrom': 6 - TestResultModel.testResult
+      // 'correctedFrom': 6 - TestResultModel.testResult
     }).then((value) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Сохранено')));
@@ -177,55 +154,61 @@ class _ResultTestState extends State<ResultTest> {
                           borderRadius: BorderRadius.circular(7)),
                     )),
               ),
-              CustomButton(
+              CustomAuthButton(
                   text: 'Сохранить результат',
                   method: () {
                     if (TestResultModel.testResult == 0) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text('Для сохранения нужно набрать >1')));
-                    } else if (TestResultModel.testIsDone == false) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Пройдите тест')));
-                    } else {
-                      if (_textEditingController.text.length > 5 &&
-                          TestResultModel.testResult > 0) {
-                        final updateResult = _updateUser2();
-                        if (updateResult == true) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Обновлено')));
-                        } else {
-                          _pushData();
-                          // users.add({
-                          //   'name': _textEditingController.text,
-                          //   'date': DateFormat('yMd')
-                          //       .format(DateTime.now())
-                          //       .toString(),
-                          //   'score': TestResultModel.testResult,
-                          //   'correctedFrom': 6 - TestResultModel.testResult
-                          // }).then((value) {
-                          //   ScaffoldMessenger.of(context).showSnackBar(
-                          //       const SnackBar(content: Text('Сохранено')));
-                          // }).catchError(
-                          //     (error) => print('Error on push data!'));
-                        }
-                      }
+                      CustomDialogsCollection.showCustomSnackBar(
+                          'Для сохранения нужно набрать >1');
+                    } else if (!TestResultModel.testIsDone) {
+                      CustomDialogsCollection.showCustomSnackBar(
+                          'Пройдите тест');
+                    } else if (TestResultModel.testResult > 0) {
+// test
+                      FirebaseFirestore.instance
+                          .collection('scores')
+                          .get()
+                          .then((QuerySnapshot querySnapshot) {
+                        querySnapshot.docs.forEach((doc) {
+                          // print(doc["score"]);
+                          if (doc['score'] < TestResultModel.testResult) {
+                            _updateUser2();
+                            CustomDialogsCollection.showCustomSnackBar(
+                                'Обновлено');
+                          } else {
+                            //     log('not updated! code line 177');
+                            log('Pushing data');
+                            _pushData();
+                          }
+                        });
+                      });
                     }
                   },
                   icon: Icons.done_sharp),
-              CustomButton(
+              CustomAuthButton(
                   text: 'К рекордам',
                   method: () {
                     Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => RecordList()));
                   },
                   icon: Icons.arrow_back_ios_new_outlined),
-              CustomButton(
-                  text: 'Обновить до 6 ',
+              CustomAuthButton(
+                  text: 'Поделиться',
                   method: () {
-                    _updateUser2();
+                    // int rez =
+
+                    Share.share(
+                        'Вау!😊 Мой рекод: ${TestResultModel.testResult} баллов из 6.',
+                        subject: 'Невероятно.');
                   },
-                  icon: Icons.arrow_back_ios_new_outlined),
-              CustomButton(
+                  icon: Icons.send),
+              // CustomAuthButton(
+              //     text: 'Обновить до 6 ',
+              //     method: () {
+              //       _updateUser2();
+              //     },
+              //     icon: Icons.arrow_back_ios_new_outlined),
+              CustomAuthButton(
                   text: 'В меню',
                   method: () {
                     Navigator.of(context).push(MaterialPageRoute(
@@ -233,10 +216,11 @@ class _ResultTestState extends State<ResultTest> {
                               onSignOut: (arg) {},
                             )));
                   },
-                  icon: Icons.arrow_back_ios_new_outlined),
+                  icon: Icons.home),
               const SizedBox(
                 height: 30,
               ),
+              // confetti
               Align(
                 alignment: Alignment.centerLeft,
                 child: ConfettiWidget(
@@ -312,10 +296,10 @@ class SubText extends StatelessWidget {
         );
       case 6:
         return const Text(
-          'Лучший!',
+          'Заметачельно!',
           style: TextStyle(color: Colors.white, fontSize: 17),
         );
     }
-    return Text('empty');
+    return const Text('empty');
   }
 }

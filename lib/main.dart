@@ -1,5 +1,6 @@
 import 'package:cAR/Pages/Auth/desicionAuth.dart';
-import 'package:cAR/Pages/Settings/settings.dart';
+import 'package:cAR/Pages/Setup/setupPage.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
@@ -10,16 +11,24 @@ import 'package:wiredash/wiredash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(); // firebase init
+  //hive
   final appDocDir = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDocDir.path);
-
   await Hive.openBox('user_data'); // name;
-  await Firebase.initializeApp();
-  runApp(MyApp());
+  // set oriendation then run app
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) => runApp(MyApp()));
 }
 
-class MyApp extends StatelessWidget {
-  // const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
@@ -34,6 +43,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Default',
           theme: ThemeData(
+            // useMaterial3: true,
             scaffoldBackgroundColor: Colors.black,
             accentColor: Color(0xFC4C0C2), // buttons color
             primarySwatch: Colors.blue, // app bar

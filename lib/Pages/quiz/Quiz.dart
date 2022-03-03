@@ -3,10 +3,10 @@
 
 import 'dart:async';
 
-import 'package:cAR/CustomButton/CustomButton.dart';
+import 'package:cAR/Widgets/CustomButton.dart';
 import 'package:cAR/Pages/Menu/Menu.dart';
-import 'package:cAR/Pages/dialogs.dart';
-import 'package:cAR/Pages/result.dart';
+import 'package:cAR/Widgets/dialogs.dart';
+import 'package:cAR/Pages/quiz/result.dart';
 import 'package:cAR/data/quizData.dart';
 import 'package:cAR/model/testResult.dart';
 import 'package:flutter/material.dart';
@@ -144,7 +144,7 @@ class _QuizzScreenState extends State<QuizzScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    CustomButton(
+                    CustomAuthButton(
                         text: btnText,
                         method: () async {
                           if (_controller!.page?.toInt() ==

@@ -1,12 +1,10 @@
 // ignore_for_file: file_names
 
 import 'dart:math';
-
-import 'package:cAR/CustomButton/CustomButton.dart';
-import 'package:cAR/model/isAnonim.dart';
+import 'package:cAR/Pages/Menu/Menu.dart';
+import 'package:cAR/Widgets/CustomButton.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -70,40 +68,26 @@ class _AuthState extends State<Auth> {
         });
   }
 
-  Future<void> _infoDialog() {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: const Text(
-                'Аномнимный вход предоставляет доступ только к комнате и фото-галереи.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Ok'),
-              )
-            ],
-          );
-        });
-  }
-
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _nicknameController = TextEditingController();
   String _error = '';
   bool _isLogin = true;
 
-  Future<void> _loginAnonim() async {
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInAnonymously();
-      widget.onSignIn(userCredential.user);
-    } catch (e) {
-      print('Исключение метода входа анонимно');
-    }
-  }
-
-  Future<void> createUser() async {
-    if (_emailController.text == '' && _passwordController.text == '') {
+  // Future<void> _loginAnonim() async {
+  //   try {
+  //     UserCredential userCredential =
+  //         await FirebaseAuth.instance.signInAnonymously();
+  //     widget.onSignIn(userCredential.user);
+  //   } catch (e) {
+  //     print('Исключение метода входа анонимно');
+  //   }
+  // }
+  //Hive.box('user_data').get('arRunned')
+  Future<void> _createUser() async {
+    if (_emailController.text == '' &&
+        _passwordController.text == '' &&
+        _nicknameController.text == '') {
       _showSnackBar('Поля не могут быть пустыми.');
     } else if (_passwordController.text.length < 6) {
       _showSnackBar('Длинна пароля должна быть > 6 символов.');
@@ -111,15 +95,16 @@ class _AuthState extends State<Auth> {
       _showSnackBar('Введите корректно почту.');
     } else {
       try {
-        
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
                 email: _emailController.text,
                 password: _passwordController.text);
         widget.onSignIn(userCredential.user);
         // when registrated save id;
+        Hive.box('user_data').put('nickname', _nicknameController.text);
         Hive.box('user_data').put('id', FirebaseAuth.instance.currentUser!.uid);
-        Hive.box('user_data').put('nickname', _emailController.text);
+        Hive.box('user_data').put('email', _emailController.text);
+        Hive.box('user_data').put('password', _passwordController.text);
       } on FirebaseAuthException catch (e) {
         setState(() {
           if (e.toString().contains(
@@ -150,13 +135,12 @@ class _AuthState extends State<Auth> {
       _showSnackBar('Длинна пароля должна быть >6 символов.');
     } else {
       try {
-        // hive
-        // var box = Hive.openBox('user_data');
         Hive.box('user_data').put('nickname', _emailController.text);
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(
                 email: _emailController.text,
                 password: _passwordController.text);
+
         widget.onSignIn(userCredential.user);
       } on FirebaseAuthException catch (e) {
         setState(() {
@@ -234,20 +218,28 @@ class _AuthState extends State<Auth> {
                   hintText: 'Пароль:',
                   textEditingController: _passwordController,
                 ),
+                (_isLogin == true)
+                    ? Text('')
+                    : CustomTextField(
+                        isHiddenText: false,
+                        icon: Icons.face,
+                        hintText: 'Никнейм:',
+                        textEditingController: _nicknameController,
+                      ),
                 Text(
                   _error,
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
                 // Buttons
 
-                CustomButton(
+                CustomAuthButton(
                   icon: Icons.assignment_ind,
                   method: () {
-                    _isLogin ? _loginUser() : createUser();
+                    _isLogin ? _loginUser() : _createUser();
                   },
                   text: _isLogin ? 'Войти' : "Создать",
                 ),
-                CustomButton(
+                CustomAuthButton(
                   icon: Icons.assignment_ind,
                   method: () {
                     setState(() {
@@ -255,25 +247,6 @@ class _AuthState extends State<Auth> {
                     });
                   },
                   text: "Сменить вход/создать",
-                ),
-
-                CustomButton(
-                  icon: Icons.perm_identity,
-                  method: () {
-                    _loginAnonim();
-                    IsAnonim.isAnonim = true;
-                  },
-                  text: 'Аноним',
-                ),
-                GestureDetector(
-                  onTap: () {
-                    _infoDialog();
-                  },
-                  child: const Icon(
-                    Icons.info,
-                    color: Colors.white,
-                    size: 30,
-                  ),
                 ),
               ],
             ),
