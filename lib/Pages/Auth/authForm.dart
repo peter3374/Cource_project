@@ -154,7 +154,7 @@ class _AuthState extends State<Auth> {
           }
           if (e.toString().contains(
               'There is no user record corresponding to this identifier. The user may have been deleted.')) {
-            _showSnackBar('Пользователь не существует. Создайте аккаунт.');
+            _showSnackBar('Пользователя не существует. Создайте аккаунт.');
           }
           if (e.toString().contains('The email address is badly formatted.')) {
             _emailController.text = "";
@@ -226,10 +226,10 @@ class _AuthState extends State<Auth> {
                         hintText: 'Никнейм:',
                         textEditingController: _nicknameController,
                       ),
-                Text(
-                  _error,
-                  style: const TextStyle(color: Colors.white),
-                ),
+                // Text(
+                //   _error,
+                //   style: const TextStyle(color: Colors.white),
+                // ),
                 // Buttons
 
                 CustomAuthButton(

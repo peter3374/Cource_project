@@ -158,6 +158,7 @@ class _ResultTestState extends State<ResultTest> {
                   text: 'Сохранить результат',
                   method: () {
                     if (TestResultModel.testResult == 0) {
+                      
                       CustomDialogsCollection.showCustomSnackBar(
                           'Для сохранения нужно набрать >1');
                     } else if (!TestResultModel.testIsDone) {

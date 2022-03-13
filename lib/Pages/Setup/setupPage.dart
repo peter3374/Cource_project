@@ -1,15 +1,18 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:cAR/Pages/Auth/authForm.dart';
 import 'package:cAR/Pages/Menu/Menu.dart';
 import 'package:cAR/Widgets/CustomButton.dart';
-import 'package:cAR/Widgets/dialogs.dart';
+
+
 import 'package:device_apps/device_apps.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+
 import 'package:url_launcher/url_launcher.dart';
+
+late bool _isArModuleInstalled = false;
+late bool _isArServiesInstalled = false;
 
 class SetupPage extends StatefulWidget {
   // final Function(User?) onSignIn;
@@ -36,7 +39,6 @@ class _SetupPageState extends State<SetupPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     onRefresh(FirebaseAuth.instance.currentUser);
   }
@@ -44,24 +46,6 @@ class _SetupPageState extends State<SetupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // bottomNavigationBar: Padding(
-      //   padding: const EdgeInsets.only(left: 170, right: 170, top: 690),
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //     children: <Widget>[
-      //       CircleAvatar(
-      //         backgroundColor:
-      //             (_seletedItem == 0) ? Colors.amber : Colors.white,
-      //         minRadius: 6,
-      //       ),
-      //       CircleAvatar(
-      //         backgroundColor:
-      //             (_seletedItem == 1) ? Colors.amber : Colors.white,
-      //         minRadius: 6,
-      //       ),
-      //     ],
-      //   ),
-      // ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.blue,
@@ -70,27 +54,40 @@ class _SetupPageState extends State<SetupPage> {
             color: Colors.white,
           ),
           onPressed: () {
+            if (Platform.isIOS) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => Menu(
+                        onSignOut: (userCredential) =>
+                            onRefresh(userCredential),
+                      )));
+            }
             setState(() {
-              _seletedItem++;
-              if (_seletedItem >= 2) {
-                // exit(0);
+              if (!_isArModuleInstalled && !_isArServiesInstalled) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text('Установите необходимые сервисы😐')));
+              } else if (!_isArModuleInstalled) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Установите модуль 😐')));
+              } else if (!_isArServiesInstalled) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Установите сервисы 😐')));
+              } else {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => Menu(
                           onSignOut: (userCredential) =>
                               onRefresh(userCredential),
                         )));
               }
+
+              if (_seletedItem >= 2) {}
+              _seletedItem++;
               _pageController.animateToPage(_seletedItem,
-                  duration: Duration(seconds: 1),
-                  // bounceOut
-                  // fastOutSlowIn
-                  curve: Curves.fastOutSlowIn);
-              print(_seletedItem.toString());
+                  duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
             });
           }),
       body: PageView(
         // use you physics
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         children: _pages,
         onPageChanged: (index) {
           setState(() {
@@ -109,7 +106,7 @@ class Page1 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: Center(
+      child: const Center(
         child: Text(
           'Добро пожаловать',
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.w700),
@@ -125,8 +122,6 @@ class Page2 extends StatefulWidget {
 }
 
 class _Page2State extends State<Page2> {
-  late bool _isArModuleInstalled = false;
-  late bool _isArServiesInstalled = false;
   @override
   void initState() {
     super.initState();
@@ -150,16 +145,15 @@ class _Page2State extends State<Page2> {
   }
 
   Future<bool> _getARModule() async {
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 1));
     bool isInstalled =
         await DeviceApps.isAppInstalled('com.NoStudio.ColledgeAR');
     return isInstalled;
   }
 
   Future<bool> _getARServices() async {
-    await Future.delayed(Duration(seconds: 4));
+    await Future.delayed(Duration(seconds: 1));
     bool isInstalled = await DeviceApps.isAppInstalled('com.google.ar.core');
-
     return isInstalled;
   }
 
@@ -191,12 +185,12 @@ class _Page2State extends State<Page2> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.info,
                     color: Colors.white,
                     size: 60,
                   ),
-                  Text(
+                  const Text(
                     'Для продолжения работы требуется проверка установленных компонентов.',
                     style: TextStyle(color: Colors.white, fontSize: 21),
                   ),
@@ -210,7 +204,7 @@ class _Page2State extends State<Page2> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
+                                  const Text(
                                     '1) Проверка наличие \n установленных AR-сервисов',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 22),
@@ -219,7 +213,7 @@ class _Page2State extends State<Page2> {
                                     message: _isArServiesInstalled
                                         ? 'Установлено'
                                         : 'Не установлено',
-                                    child: CircleAvatar(
+                                    child: const CircleAvatar(
                                         backgroundColor: Colors.white10,
                                         child: CircularProgressIndicator()),
                                   ),
@@ -232,7 +226,7 @@ class _Page2State extends State<Page2> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
+                                      const Text(
                                         '1) Проверка наличие \n установленных AR-сервисов',
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 22),
@@ -241,7 +235,7 @@ class _Page2State extends State<Page2> {
                                           message: _isArServiesInstalled
                                               ? 'Установлено'
                                               : 'Не установлено',
-                                          child: CircleAvatar(
+                                          child: const CircleAvatar(
                                               backgroundColor: Colors.white10,
                                               child: Icon(
                                                 Icons.error_outline_rounded,
@@ -261,7 +255,7 @@ class _Page2State extends State<Page2> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
+                                  const Text(
                                     '1) Проверка наличие \n установленных AR-сервисов',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 22),
@@ -270,7 +264,7 @@ class _Page2State extends State<Page2> {
                                       message: _isArServiesInstalled
                                           ? 'Установлено'
                                           : 'Не установлено',
-                                      child: CircleAvatar(
+                                      child: const CircleAvatar(
                                           backgroundColor: Colors.white10,
                                           child: Icon(Icons.done))),
                                 ],
@@ -288,7 +282,7 @@ class _Page2State extends State<Page2> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
+                                  const Text(
                                     '2) Проверка наличия \n второстепенного AR-модуля',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 22),
@@ -297,7 +291,7 @@ class _Page2State extends State<Page2> {
                                     message: _isArServiesInstalled
                                         ? 'Установлено'
                                         : 'Не установлено',
-                                    child: CircleAvatar(
+                                    child: const CircleAvatar(
                                         backgroundColor: Colors.white10,
                                         child: CircularProgressIndicator()),
                                   ),
@@ -310,7 +304,7 @@ class _Page2State extends State<Page2> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
+                                      const Text(
                                         '2) Проверка наличия \n второстепенного AR-модуля',
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 22),
@@ -319,7 +313,7 @@ class _Page2State extends State<Page2> {
                                           message: _isArModuleInstalled
                                               ? 'Установлено'
                                               : 'Не установлено',
-                                          child: CircleAvatar(
+                                          child: const CircleAvatar(
                                               backgroundColor: Colors.white10,
                                               child: Icon(
                                                 Icons.error_outline_rounded,
@@ -339,7 +333,7 @@ class _Page2State extends State<Page2> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
+                                  const Text(
                                     '2) Проверка наличия \n второстепенного AR-модуля',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 22),
@@ -348,7 +342,7 @@ class _Page2State extends State<Page2> {
                                       message: _isArModuleInstalled
                                           ? 'Установлено'
                                           : 'Не установлено',
-                                      child: CircleAvatar(
+                                      child: const CircleAvatar(
                                           backgroundColor: Colors.white10,
                                           child: Icon(Icons.done))),
                                 ],

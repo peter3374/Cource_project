@@ -32,15 +32,11 @@ class _QuizzScreenState extends State<QuizzScreen> {
     _controller = PageController(initialPage: 0);
   }
 
- 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.black,
-     
       body: Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
@@ -151,8 +147,6 @@ class _QuizzScreenState extends State<QuizzScreen> {
                               questions.length - 1) {
                             TestResultModel.testResult = score;
                             TestResultModel.testIsDone = true;
-                          
-                         
 
                             Navigator.push(
                                 context,

@@ -3,8 +3,10 @@
 import 'dart:developer';
 
 import 'dart:ui';
+import 'package:cAR/Pages/Menu/shimmerColors.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:cAR/Pages/Menu/MenuModel.dart';
+
 import 'package:cAR/Pages/Menu/TurnOff.dart';
 import 'package:cAR/Pages/RecordList/RecordList.dart';
 import 'package:cAR/Pages/User/user.dart';
@@ -97,13 +99,13 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
 
               break;
             case 1:
-             int photoRunned = Hive.box('user_data').get('photoRunned') ?? 0;
+              int photoRunned = Hive.box('user_data').get('photoRunned') ?? 0;
               photoRunned++;
               Hive.box('user_data').put('testRunned', photoRunned);
 
               setState(() {
                 _imagePath = 'gallery';
-                _floatIconColor = MenuModel.iconColors[1];
+                _floatIconColor = MenuColors().mainColor[1];
               });
               // Navigator.of(context)
               //     .push(MaterialPageRoute(builder: (context) => QuizzScreen()));
@@ -116,7 +118,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
 
               setState(() {
                 _imagePath = 'quiz';
-                _floatIconColor = MenuModel.iconColors[2];
+                _floatIconColor = MenuColors().mainColor[2];
               });
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (context) => QuizzScreen()));
@@ -124,7 +126,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
             case 3:
               setState(() {
                 _imagePath = 'records';
-                _floatIconColor = MenuModel.iconColors[3];
+                _floatIconColor = MenuColors().mainColor[3];
               });
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (context) => RecordList()));
@@ -132,7 +134,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
             case 4:
               setState(() {
                 _imagePath = 'stats';
-                _floatIconColor = MenuModel.iconColors[4];
+                _floatIconColor = MenuColors().mainColor[4];
               });
               Navigator.of(context)
                   .push(MaterialPageRoute(builder: (context) => UserProfile()));
@@ -211,7 +213,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                       case 0:
                         setState(() {
                           _imagePath = 'ar';
-                          _floatIconColor = MenuModel.iconColors[0];
+                          _floatIconColor = MenuColors().mainColor[0];
                         });
                         break;
                       case 1:
@@ -222,7 +224,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
 
                         setState(() {
                           _imagePath = 'gallery';
-                          _floatIconColor = MenuModel.iconColors[1];
+                          _floatIconColor = MenuColors().mainColor[1];
                         });
 
                         break;
@@ -231,21 +233,21 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
 
                         setState(() {
                           _imagePath = 'quiz';
-                          _floatIconColor = MenuModel.iconColors[2];
+                          _floatIconColor = MenuColors().mainColor[2];
                         });
 
                         break;
                       case 3:
                         setState(() {
                           _imagePath = 'records';
-                          _floatIconColor = MenuModel.iconColors[3];
+                          _floatIconColor = MenuColors().mainColor[3];
                         });
 
                         break;
                       case 4:
                         setState(() {
                           _imagePath = 'stats';
-                          _floatIconColor = MenuModel.iconColors[4];
+                          _floatIconColor = MenuColors().mainColor[4];
                         });
 
                         break;
@@ -258,7 +260,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                   diameterRatio: 3,
                   physics: const FixedExtentScrollPhysics(),
                   childDelegate: ListWheelChildBuilderDelegate(
-                      childCount: MenuModel.iconColors.length,
+                      childCount: MenuColors().mainColor.length,
                       builder: ((context, index) =>
                           // MenuCard(
                           //       color: MenuModel.iconColors[index],
@@ -274,36 +276,43 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                                 const SizedBox(
                                   height: 5,
                                 ),
-                                Icon(MenuModel.icons[index],
+                                Icon(MenuColors().icons[index],
                                     size: 65,
-                                    color: MenuModel.iconColors[index]),
+                                    color: MenuColors().mainColor[index]),
                                 const SizedBox(
                                   height: 10,
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                      color: Colors.black.withOpacity(0.7),
-                                      borderRadius: BorderRadius.circular(6),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: MenuModel.iconColors[index],
-                                            blurRadius: 14)
-                                      ],
-                                      border: Border.all(
-                                          color: MenuModel.iconColors[index],
-                                          width: 2)),
-                                  child: Text(
-                                    MenuModel.title[index],
-                                    style: const TextStyle(
-                                        color: Colors.white, fontSize: 22),
-                                  ),
-                                ),
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.7),
+                                        borderRadius: BorderRadius.circular(6),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color:
+                                                  MenuColors().mainColor[index],
+                                              blurRadius: 14)
+                                        ],
+                                        border: Border.all(
+                                            color:
+                                                MenuColors().mainColor[index],
+                                            width: 2)),
+                                    child: Shimmer.fromColors(
+                                        child: Text(
+                                          MenuColors().title[index],
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22),
+                                        ),
+                                        baseColor:
+                                            MenuColors().mainColor[index],
+                                        highlightColor: MenuColors()
+                                            .shimmerHightlight[index])),
                                 const SizedBox(
                                   height: 12,
                                 ),
                                 Text(
-                                  MenuModel.description[index],
+                                  MenuColors().description[index],
                                   style: const TextStyle(
                                       fontSize: 21,
                                       color: Colors.white,
@@ -315,7 +324,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                             decoration: BoxDecoration(
                                 color: Colors.black45,
                                 border: Border.all(
-                                    color: MenuModel.iconColors[index],
+                                    color: MenuColors().mainColor[index],
                                     width: 3),
                                 borderRadius: BorderRadius.circular(9)),
                           ))),

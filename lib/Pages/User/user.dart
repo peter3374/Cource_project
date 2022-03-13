@@ -1,15 +1,12 @@
-import 'dart:math';
 
-import 'package:cAR/Pages/Auth/authForm.dart';
-import 'package:cAR/Widgets/dialogs.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:intl/intl.dart';
+
 
 class UserProfile extends StatefulWidget {
+  const UserProfile({Key? key}) : super(key: key);
+
   @override
   State<UserProfile> createState() => _UserProfileState();
 }

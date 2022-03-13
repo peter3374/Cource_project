@@ -9,23 +9,25 @@ class TurnOffPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
-          child: Hero(
-        tag: 'turnOff',
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            TurnOffCustomButton(
-                method: () => exit(0),
-                iconData: Icons.power_settings_new,
-                text: 'Выйти из приложения'),
-            TurnOffCustomButton(
-                method: () => Navigator.pop(context),
-                iconData: Icons.arrow_back_ios_new,
-                text: 'Вернуться'),
-          ],
-        ),
-      )),
+      body: Expanded(
+        child: Center(
+            child: Hero(
+          tag: 'turnOff',
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TurnOffCustomButton(
+                  method: () => exit(0),
+                  iconData: Icons.power_settings_new,
+                  text: 'Выйти из приложения'),
+              TurnOffCustomButton(
+                  method: () => Navigator.pop(context),
+                  iconData: Icons.arrow_back_ios_new,
+                  text: 'Вернуться'),
+            ],
+          ),
+        )),
+      ),
     );
   }
 }
