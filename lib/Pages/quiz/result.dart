@@ -1,6 +1,4 @@
 import 'dart:developer';
-import 'dart:ui';
-
 import 'package:cAR/Widgets/CustomButton.dart';
 import 'package:cAR/Pages/Menu/Menu.dart';
 import 'package:cAR/Pages/RecordList/RecordList.dart';
@@ -8,9 +6,6 @@ import 'package:cAR/Widgets/dialogs.dart';
 import 'package:cAR/model/testResult.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:confetti/confetti.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -23,7 +18,6 @@ class ResultTest extends StatefulWidget {
   State<ResultTest> createState() => _ResultTestState();
 }
 
-// DateFormat('yMd').format(DateTime.now()).toString(),
 class _ResultTestState extends State<ResultTest> {
   final TextEditingController _textEditingController = TextEditingController();
   static final List<Color> confettiColors = [
@@ -42,18 +36,16 @@ class _ResultTestState extends State<ResultTest> {
   @override
   void initState() {
     super.initState();
-    print(TestResultModel.testResult);
     if (TestResultModel.testResult == 6) {
       _confettiController.play();
     }
-
     // hive
     _textEditingController.text = Hive.box('user_data').get('nickname');
   }
 
   Future<bool> _updateUser2() async {
     // Date now - ${DateFormat('yMd').format(DateTime.now())}
-    var collection = await FirebaseFirestore.instance.collection('scores');
+    var collection = FirebaseFirestore.instance.collection('scores');
     // update
     collection
         .doc(
@@ -158,7 +150,6 @@ class _ResultTestState extends State<ResultTest> {
                   text: 'Сохранить результат',
                   method: () {
                     if (TestResultModel.testResult == 0) {
-                      
                       CustomDialogsCollection.showCustomSnackBar(
                           'Для сохранения нужно набрать >1');
                     } else if (!TestResultModel.testIsDone) {
@@ -203,12 +194,7 @@ class _ResultTestState extends State<ResultTest> {
                         subject: 'Невероятно.');
                   },
                   icon: Icons.send),
-              // CustomAuthButton(
-              //     text: 'Обновить до 6 ',
-              //     method: () {
-              //       _updateUser2();
-              //     },
-              //     icon: Icons.arrow_back_ios_new_outlined),
+
               CustomAuthButton(
                   text: 'В меню',
                   method: () {

@@ -24,7 +24,7 @@ dependencies:
   firebase_core:
   firebase_storage:
   cloud_firestore:
-  firebase_auth: ^3.3.2
+  firebase_auth: 
   intl:
   wiredash: ^0.7.0+1
   hive_flutter:
@@ -59,6 +59,12 @@ flutter:
   assets:
     - assets/
     - assets/backgrounds/
+    - assets/gallery/first/
+    - assets/gallery/info/
+    - assets/gallery/shvei/
+    - assets/gallery/textstyle/
+    - assets/gallery/vipusknkiki/
+    - assets/gallery/vospit/
 
 
 

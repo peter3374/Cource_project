@@ -9,25 +9,23 @@ class TurnOffPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Expanded(
-        child: Center(
-            child: Hero(
-          tag: 'turnOff',
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              TurnOffCustomButton(
-                  method: () => exit(0),
-                  iconData: Icons.power_settings_new,
-                  text: 'Выйти из приложения'),
-              TurnOffCustomButton(
-                  method: () => Navigator.pop(context),
-                  iconData: Icons.arrow_back_ios_new,
-                  text: 'Вернуться'),
-            ],
-          ),
-        )),
-      ),
+      body: Center(
+          child: Hero(
+        tag: 'turnOff',
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TurnOffCustomButton(
+                method: () => exit(0),
+                iconData: Icons.power_settings_new,
+                text: 'Выйти из приложения'),
+            TurnOffCustomButton(
+                method: () => Navigator.pop(context),
+                iconData: Icons.arrow_back_ios_new,
+                text: 'Вернуться'),
+          ],
+        ),
+      )),
     );
   }
 }
@@ -45,24 +43,27 @@ class TurnOffCustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        InkWell(
-          customBorder: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          InkWell(
+            customBorder: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            onTap: method,
+            child: Icon(
+              iconData,
+              size: 120,
+              color: Colors.white,
+            ),
           ),
-          onTap: method,
-          child: Icon(
-            iconData,
-            size: 150,
-            color: Colors.white,
+          Text(
+            text,
+            style: const TextStyle(fontSize: 26, color: Colors.white),
           ),
-        ),
-        Text(
-          text,
-          style: const TextStyle(fontSize: 26, color: Colors.white),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

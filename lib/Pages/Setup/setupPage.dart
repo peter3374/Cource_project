@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cAR/Pages/Menu/Menu.dart';
 import 'package:cAR/Widgets/CustomButton.dart';
 
-
 import 'package:device_apps/device_apps.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -72,14 +71,20 @@ class _SetupPageState extends State<SetupPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Установите сервисы 😐')));
               } else {
+                // Navigator.of(context).push(MaterialPageRoute(
+                //     builder: (context) => Menu(
+                //           onSignOut: (userCredential) =>
+                //               onRefresh(userCredential),
+                //         )));
+              }
+
+              if (_seletedItem >= 2) {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => Menu(
                           onSignOut: (userCredential) =>
                               onRefresh(userCredential),
                         )));
               }
-
-              if (_seletedItem >= 2) {}
               _seletedItem++;
               _pageController.animateToPage(_seletedItem,
                   duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
@@ -197,7 +202,7 @@ class _Page2State extends State<Page2> {
                   Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: FutureBuilder(
-                          future: _getARServices(),
+                          future: _getARModule(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
                               return Row(
@@ -256,7 +261,7 @@ class _Page2State extends State<Page2> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
-                                    '1) Проверка наличие \n установленных AR-сервисов',
+                                    '1) Проверка наличия \n установленных AR-сервисов',
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 22),
                                   ),

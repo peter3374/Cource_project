@@ -3,6 +3,7 @@
 import 'dart:developer';
 
 import 'dart:ui';
+import 'package:cAR/Pages/Gallery/gallery_menu.dart';
 import 'package:cAR/Pages/Menu/shimmerColors.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -107,8 +108,8 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                 _imagePath = 'gallery';
                 _floatIconColor = MenuColors().mainColor[1];
               });
-              // Navigator.of(context)
-              //     .push(MaterialPageRoute(builder: (context) => QuizzScreen()));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => PhotoGallery()));
               break;
             case 2:
               int testRunned = Hive.box('user_data').get('testRunned') ?? 0;
@@ -217,11 +218,6 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                         });
                         break;
                       case 1:
-                        int testRunned =
-                            Hive.box('user_data').get('testRunned') ?? 0;
-                        testRunned++;
-                        Hive.box('user_data').put('testRunned', testRunned);
-
                         setState(() {
                           _imagePath = 'gallery';
                           _floatIconColor = MenuColors().mainColor[1];
@@ -230,7 +226,10 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                         break;
                       case 2:
                         log('record list');
-
+                        int testRunned =
+                            Hive.box('user_data').get('testRunned') ?? 0;
+                        testRunned++;
+                        Hive.box('user_data').put('testRunned', testRunned);
                         setState(() {
                           _imagePath = 'quiz';
                           _floatIconColor = MenuColors().mainColor[2];

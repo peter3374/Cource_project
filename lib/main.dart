@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cAR/Pages/Auth/desicionAuth.dart';
+import 'package:cAR/Pages/Menu/Menu.dart';
 import 'package:cAR/Pages/Setup/setupPage.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -11,7 +14,9 @@ import 'package:wiredash/wiredash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // firebase init
+if(Platform.isAndroid || Platform.isIOS){
+    await Firebase.initializeApp(); // firebase init
+}
   //hive
   final appDocDir = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDocDir.path);
@@ -50,7 +55,7 @@ class _MyAppState extends State<MyApp> {
           ),
           home: Scaffold(
             backgroundColor: Colors.black,
-               body: DecisionTree(),
+               body: (Platform.isWindows) ? Menu(onSignOut: (User){}) : DecisionTree()
          //   body: SetupPage(),
           ),
         ));
