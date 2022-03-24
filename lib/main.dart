@@ -14,9 +14,9 @@ import 'package:wiredash/wiredash.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-if(Platform.isAndroid || Platform.isIOS){
+  if (Platform.isAndroid || Platform.isIOS) {
     await Firebase.initializeApp(); // firebase init
-}
+  }
   //hive
   final appDocDir = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDocDir.path);
@@ -53,11 +53,10 @@ class _MyAppState extends State<MyApp> {
             accentColor: Color(0xFC4C0C2), // buttons color
             primarySwatch: Colors.blue, // app bar
           ),
-          home: Scaffold(
-            backgroundColor: Colors.black,
-               body: (Platform.isWindows) ? Menu(onSignOut: (User){}) : DecisionTree()
-         //   body: SetupPage(),
-          ),
+          home:
+              const Scaffold(backgroundColor: Colors.black, body: DecisionTree()
+                  //   body: SetupPage(),
+                  ),
         ));
   }
 }

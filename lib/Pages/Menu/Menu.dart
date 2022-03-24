@@ -4,12 +4,13 @@ import 'dart:developer';
 
 import 'dart:ui';
 import 'package:cAR/Pages/Gallery/gallery_menu.dart';
+import 'package:cAR/Pages/Menu/dialogs.dart';
 import 'package:cAR/Pages/Menu/shimmerColors.dart';
+import 'package:cAR/Pages/record_list/record_list.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:cAR/Pages/Menu/TurnOff.dart';
-import 'package:cAR/Pages/RecordList/RecordList.dart';
+
 import 'package:cAR/Pages/User/user.dart';
 import 'package:cAR/Pages/quiz/Quiz.dart';
 
@@ -51,33 +52,34 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
     }
 
     _controller.forward(); // run animation
-    {
-      int appRunned = Hive.box('user_data').get('appRunned') ?? 0;
-      appRunned++;
-      Hive.box('user_data').put('appRunned', appRunned);
-    }
-    _getARModule().then((value) => (value)
-        ? print('ok')
-        : CustomDialogsCollection.showCustomSnackBar('no'));
-    _getARServives().then(
-        (value) => (value) ? log('ar installed') : log('ar not installed'));
+
+    int appRunnedTimes = Hive.box('user_data').get('appRunned') ?? 0;
+    appRunnedTimes += 1;
+    Hive.box('user_data').put('appRunned', appRunnedTimes);
+
+    _getARModule();
+    _getARServives();
   }
 
   @override
   void dispose() {
     _controller.dispose();
-
     super.dispose();
   }
 
   Future<bool> _getARModule() async {
     bool isInstalled =
         await DeviceApps.isAppInstalled('com.NoStudio.ColledgeAR');
+    log(isInstalled.toString());
+    if (!isInstalled) {
+      TaskListDialogs().showAddDialog(context);
+    }
     return isInstalled;
   }
 
   Future<bool> _getARServives() async {
     bool isInstalled = await DeviceApps.isAppInstalled('com.google.ar.core');
+    log(isInstalled.toString());
     return isInstalled;
   }
 
@@ -97,6 +99,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
               // _showDialog();
 
               DeviceApps.openApp('com.NoStudio.ColledgeAR');
+              log('new index: $_changedIndex');
 
               break;
             case 1:
@@ -109,7 +112,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                 _floatIconColor = MenuColors().mainColor[1];
               });
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => PhotoGallery()));
+                  MaterialPageRoute(builder: (context) =>const PhotoGallery()));
               break;
             case 2:
               int testRunned = Hive.box('user_data').get('testRunned') ?? 0;
@@ -122,7 +125,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                 _floatIconColor = MenuColors().mainColor[2];
               });
               Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => QuizzScreen()));
+                  .push(MaterialPageRoute(builder: (context) =>const QuizzScreen()));
               break;
             case 3:
               setState(() {
@@ -138,12 +141,12 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                 _floatIconColor = MenuColors().mainColor[4];
               });
               Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => UserProfile()));
+                  .push(MaterialPageRoute(builder: (context) => const UserProfile()));
               break;
           }
         },
         backgroundColor: _floatIconColor,
-        child: Icon(
+        child: const Icon(
           Icons.arrow_forward_ios_rounded,
           color: Colors.white,
         ),
@@ -225,11 +228,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
 
                         break;
                       case 2:
-                        log('record list');
-                        int testRunned =
-                            Hive.box('user_data').get('testRunned') ?? 0;
-                        testRunned++;
-                        Hive.box('user_data').put('testRunned', testRunned);
+                      
                         setState(() {
                           _imagePath = 'quiz';
                           _floatIconColor = MenuColors().mainColor[2];

@@ -1,7 +1,8 @@
 import 'dart:developer';
+import 'package:cAR/Pages/record_list/record_list.dart';
 import 'package:cAR/Widgets/CustomButton.dart';
 import 'package:cAR/Pages/Menu/Menu.dart';
-import 'package:cAR/Pages/RecordList/RecordList.dart';
+
 import 'package:cAR/Widgets/dialogs.dart';
 import 'package:cAR/model/testResult.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
