@@ -30,8 +30,8 @@ android {
     compileSdkVersion 31
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        // sourceCompatibility JavaVersion.VERSION_1_8
+        // targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
@@ -55,9 +55,12 @@ android {
 
     buildTypes {
         release {
+            // v1SigningEnabled true
+            // v2SigningEnabled true
             // signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
+            signingConfig signingConfigs.debug
         }
     }
 }

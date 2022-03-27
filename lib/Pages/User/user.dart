@@ -1,8 +1,6 @@
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 
 class UserProfile extends StatefulWidget {
   const UserProfile({Key? key}) : super(key: key);
@@ -20,7 +18,7 @@ class _UserProfileState extends State<UserProfile> {
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      print(result);
+
 
       if (result == ConnectivityResult.mobile ||
           result == ConnectivityResult.ethernet ||
@@ -34,7 +32,6 @@ class _UserProfileState extends State<UserProfile> {
     _subscription.cancel();
   }
 
-  TextEditingController _passwordController = TextEditingController();
   Color _onlineColor = Colors.greenAccent;
   @override
   Widget build(BuildContext context) {
@@ -55,19 +52,12 @@ class _UserProfileState extends State<UserProfile> {
         });
       }
     });
-    // for output
-    final nickName = Hive.box('user_data').get(
-      'email',
-    );
-    bool _showTextField = false;
 
-    int appRunned = Hive.box('user_data').get('appRunned') ?? 0;
-    int arRunned = Hive.box('user_data').get('arRunned') ?? 0;
-    int testRunned = Hive.box('user_data').get('testRunned') ?? 0;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Привет, ${Hive.box('user_data').get('nickname')}'),
+        title: Text(
+            'Привет, ${Hive.box('user_data').get('nickname') ?? 'Загрузка...'}'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -100,18 +90,18 @@ class _UserProfileState extends State<UserProfile> {
             )),
             Text(
               'Логин: ${Hive.box('user_data').get(
-                'email',
-              )}',
-              style: TextStyle(color: Colors.white),
+                    'email',
+                  ) ?? 'Загрузка...'}',
+              style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(
               height: 10,
             ),
             Text(
               'Пароль: ${Hive.box('user_data').get(
-                'password',
-              )}',
-              style: TextStyle(color: Colors.white),
+                    'password',
+                  ) ?? 'Загрузка...'}',
+              style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(
               height: 10,
@@ -123,7 +113,7 @@ class _UserProfileState extends State<UserProfile> {
             ),
             Text(
               _onlineColor == Colors.redAccent ? 'В сети: Нет' : 'В сети: ДА',
-              style: TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(
               height: 10,

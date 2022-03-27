@@ -19,11 +19,10 @@ class _DecisionTreeState extends State<DecisionTree> {
   @override
   void initState() {
     super.initState();
-
-    var box = Hive.box('user_data');
-    int appRunned = box.get('appRunned') ?? 0;
-    appRunned++;
-    box.put('appRunned', appRunned);
+int appRunnedTimes = Hive.box('user_data').get('appRunned') ?? 0;
+    appRunnedTimes++;
+    Hive.box('user_data').put('appRunned', appRunnedTimes);
+  
     onRefresh(
         FirebaseAuth.instance.currentUser); // keeps user (нет повторного входа)
   }

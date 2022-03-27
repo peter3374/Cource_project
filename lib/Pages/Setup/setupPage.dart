@@ -48,7 +48,7 @@ class _SetupPageState extends State<SetupPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.blue,
-          child: Icon(
+          child: const Icon(
             Icons.arrow_forward_ios_rounded,
             color: Colors.white,
           ),
@@ -62,14 +62,14 @@ class _SetupPageState extends State<SetupPage> {
             }
             setState(() {
               if (!_isArModuleInstalled && !_isArServiesInstalled) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Установите необходимые сервисы😐')));
+                // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                //     content: Text('Установите необходимые сервисы😐')));
               } else if (!_isArModuleInstalled) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Установите модуль 😐')));
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(content: Text('Установите модуль 😐')));
               } else if (!_isArServiesInstalled) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Установите сервисы 😐')));
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(content: Text('Установите сервисы 😐')));
               } else {
                 // Navigator.of(context).push(MaterialPageRoute(
                 //     builder: (context) => Menu(
@@ -78,7 +78,7 @@ class _SetupPageState extends State<SetupPage> {
                 //         )));
               }
 
-              if (_seletedItem >= 2) {
+              if (_seletedItem >= 1) {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => Menu(
                           onSignOut: (userCredential) =>
@@ -87,7 +87,8 @@ class _SetupPageState extends State<SetupPage> {
               }
               _seletedItem++;
               _pageController.animateToPage(_seletedItem,
-                  duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.fastOutSlowIn);
             });
           }),
       body: PageView(
@@ -132,40 +133,23 @@ class _Page2State extends State<Page2> {
     super.initState();
   }
 
-  Future<void> _showDialog() {
-    return showDialog(
-        barrierColor: Colors.black54,
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Приложение не установлено'),
-            actions: [
-              TextButton(
-                  onPressed: () =>
-                      launch('https://disk.yandex.ru/d/waW-2rRhsgwLZw'),
-                  child: Text('Скачать'))
-            ],
-          );
-        });
-  }
-
   Future<bool> _getARModule() async {
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     bool isInstalled =
         await DeviceApps.isAppInstalled('com.NoStudio.ColledgeAR');
     return isInstalled;
   }
 
   Future<bool> _getARServices() async {
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     bool isInstalled = await DeviceApps.isAppInstalled('com.google.ar.core');
     return isInstalled;
   }
 
-  Color _tweenStartColor = Colors.black;
+  final Color _tweenStartColor = Colors.black;
   Color _tweenEndColor = Colors.cyan;
   _firstColorSwitch() async {
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 5));
     setState(() {
       _tweenEndColor = Colors.pink;
     });
@@ -205,74 +189,84 @@ class _Page2State extends State<Page2> {
                           future: _getARModule(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    '1) Проверка наличие \n установленных AR-сервисов',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 22),
-                                  ),
-                                  Tooltip(
-                                    message: _isArServiesInstalled
-                                        ? 'Установлено'
-                                        : 'Не установлено',
-                                    child: const CircleAvatar(
-                                        backgroundColor: Colors.white10,
-                                        child: CircularProgressIndicator()),
-                                  ),
-                                ],
-                              );
-                            } else if (snapshot.data == false) {
-                              return Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        '1) Проверка наличие \n установленных AR-сервисов',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 22),
-                                      ),
-                                      Tooltip(
-                                          message: _isArServiesInstalled
-                                              ? 'Установлено'
-                                              : 'Не установлено',
-                                          child: const CircleAvatar(
-                                              backgroundColor: Colors.white10,
-                                              child: Icon(
-                                                Icons.error_outline_rounded,
-                                                color: Colors.red,
-                                              ))),
-                                    ],
-                                  ),
-                                  CustomAuthButton(
-                                      text: 'Установить',
-                                      method: () => launch(
-                                          'https://disk.yandex.ru/d/waW-2rRhsgwLZw'),
-                                      icon: Icons.shopping_bag),
-                                ],
-                              );
-                            } else {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    '1) Проверка наличия \n установленных AR-сервисов',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 22),
-                                  ),
-                                  Tooltip(
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      '1) Проверка наличие \n установленных AR-сервисов',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 22),
+                                    ),
+                                    Tooltip(
                                       message: _isArServiesInstalled
                                           ? 'Установлено'
                                           : 'Не установлено',
                                       child: const CircleAvatar(
                                           backgroundColor: Colors.white10,
-                                          child: Icon(Icons.done))),
+                                          child: CircularProgressIndicator()),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else if (snapshot.data == false) {
+                              return Column(
+                                children: [
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          '1) Проверка наличия \n установленных AR-сервисов',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22),
+                                        ),
+                                        Tooltip(
+                                            message: _isArServiesInstalled
+                                                ? 'Установлено'
+                                                : 'Не установлено',
+                                            child: const CircleAvatar(
+                                                backgroundColor: Colors.white10,
+                                                child: Icon(
+                                                  Icons.error_outline_rounded,
+                                                  color: Colors.red,
+                                                ))),
+                                      ],
+                                    ),
+                                  ),
+                                  CustomAuthButton(
+                                      text: 'Установить',
+                                      method: () => launch(
+                                          'https://disk.yandex.ru/d/syOhbUBWbJb-GQ'),
+                                      icon: Icons.shopping_bag),
                                 ],
+                              );
+                            } else {
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      '1) Проверка наличия \n установленных AR-сервисов',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 22),
+                                    ),
+                                    Tooltip(
+                                        message: _isArServiesInstalled
+                                            ? 'Установлено'
+                                            : 'Не установлено',
+                                        child: const CircleAvatar(
+                                            backgroundColor: Colors.white10,
+                                            child: Icon(Icons.done))),
+                                  ],
+                                ),
                               );
                             }
                           })),
@@ -283,48 +277,55 @@ class _Page2State extends State<Page2> {
                           future: _getARServices(),
                           builder: (context, snapshot) {
                             if (!snapshot.hasData) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    '2) Проверка наличия \n второстепенного AR-модуля',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 22),
-                                  ),
-                                  Tooltip(
-                                    message: _isArServiesInstalled
-                                        ? 'Установлено'
-                                        : 'Не установлено',
-                                    child: const CircleAvatar(
-                                        backgroundColor: Colors.white10,
-                                        child: CircularProgressIndicator()),
-                                  ),
-                                ],
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      '2) Проверка наличия \n второстепенного AR-модуля',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 22),
+                                    ),
+                                    Tooltip(
+                                      message: _isArServiesInstalled
+                                          ? 'Установлено'
+                                          : 'Не установлено',
+                                      child: const CircleAvatar(
+                                          backgroundColor: Colors.white10,
+                                          child: CircularProgressIndicator()),
+                                    ),
+                                  ],
+                                ),
                               );
                             } else if (snapshot.data == false) {
                               return Column(
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        '2) Проверка наличия \n второстепенного AR-модуля',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 22),
-                                      ),
-                                      Tooltip(
-                                          message: _isArModuleInstalled
-                                              ? 'Установлено'
-                                              : 'Не установлено',
-                                          child: const CircleAvatar(
-                                              backgroundColor: Colors.white10,
-                                              child: Icon(
-                                                Icons.error_outline_rounded,
-                                                color: Colors.red,
-                                              ))),
-                                    ],
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          '2) Проверка наличия \n второстепенного AR-модуля',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 22),
+                                        ),
+                                        Tooltip(
+                                            message: _isArModuleInstalled
+                                                ? 'Установлено'
+                                                : 'Не установлено',
+                                            child: const CircleAvatar(
+                                                backgroundColor: Colors.white10,
+                                                child: Icon(
+                                                  Icons.error_outline_rounded,
+                                                  color: Colors.red,
+                                                ))),
+                                      ],
+                                    ),
                                   ),
                                   CustomAuthButton(
                                       text: 'Установить',
@@ -334,23 +335,26 @@ class _Page2State extends State<Page2> {
                                 ],
                               );
                             } else {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    '2) Проверка наличия \n второстепенного AR-модуля',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 22),
-                                  ),
-                                  Tooltip(
-                                      message: _isArModuleInstalled
-                                          ? 'Установлено'
-                                          : 'Не установлено',
-                                      child: const CircleAvatar(
-                                          backgroundColor: Colors.white10,
-                                          child: Icon(Icons.done))),
-                                ],
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      '2) Проверка наличия \n второстепенного AR-модуля',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 22),
+                                    ),
+                                    Tooltip(
+                                        message: _isArModuleInstalled
+                                            ? 'Установлено'
+                                            : 'Не установлено',
+                                        child: const CircleAvatar(
+                                            backgroundColor: Colors.white10,
+                                            child: Icon(Icons.done))),
+                                  ],
+                                ),
                               );
                             }
                           })),

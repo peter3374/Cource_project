@@ -8,13 +8,13 @@ class TaskListDialogs {
       context: context,
       builder: (context) {
         return AlertDialog(
-          
+          content: const Text('Без сервисов нет возможности посещать музей!'),
           title: const Text('Установите сервисы!😡'),
           actions: [
             TaskListDialogButtons(
               icon: Icons.add_task_outlined,
               text: 'Скачать модуль',
-              method: () => launch('https://disk.yandex.ru/d/waW-2rRhsgwLZw'),
+              method: () => launch('https://disk.yandex.ru/d/syOhbUBWbJb-GQ'),
             ),
             TaskListDialogButtons(
               icon: Icons.post_add_outlined,

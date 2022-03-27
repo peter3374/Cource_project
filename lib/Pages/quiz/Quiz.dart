@@ -1,10 +1,6 @@
 // ignore: file_names
 // ignore_for_file: avoid_print, file_names
-
-import 'dart:async';
-
 import 'package:cAR/Widgets/CustomButton.dart';
-import 'package:cAR/Pages/Menu/Menu.dart';
 import 'package:cAR/Widgets/dialogs.dart';
 import 'package:cAR/Pages/quiz/result.dart';
 import 'package:cAR/data/quizData.dart';
@@ -40,7 +36,8 @@ class _QuizzScreenState extends State<QuizzScreen> {
       body: Container(
         decoration: const BoxDecoration(
             image: DecorationImage(
-                fit: BoxFit.cover, image: AssetImage('assets/quiz.jpg')),
+                fit: BoxFit.cover,
+                image: AssetImage('assets/backgrounds/quiz.jpg')),
             color: Colors.black,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30),
@@ -51,7 +48,7 @@ class _QuizzScreenState extends State<QuizzScreen> {
             child: PageView.builder(
               controller: _controller!,
               onPageChanged: (page) {
-                if (page == questions.length - 1) {
+                if (page == Questions().questions.length - 1) {
                   setState(() {
                     btnText = "Результат";
                   });
@@ -66,13 +63,10 @@ class _QuizzScreenState extends State<QuizzScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(
-                      height: 50,
-                    ),
                     SizedBox(
                       width: double.infinity,
                       child: Text(
-                        "Вопрос ${index + 1}/${questions.length}",
+                        "Вопрос ${index + 1}/${Questions().questions.length}",
                         textAlign: TextAlign.start,
                         style: const TextStyle(
                           color: Colors.white,
@@ -90,14 +84,16 @@ class _QuizzScreenState extends State<QuizzScreen> {
                       width: double.infinity,
                       height: 200.0,
                       child: Text(
-                        "${questions[index].question}",
+                        "${Questions().questions[index].question}",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 22.0,
                         ),
                       ),
                     ),
-                    for (int i = 0; i < questions[index].answers!.length; i++)
+                    for (int i = 0;
+                        i < Questions().questions[index].answers!.length;
+                        i++)
                       Container(
                         width: double.infinity,
                         height: 50.0,
@@ -110,7 +106,8 @@ class _QuizzScreenState extends State<QuizzScreen> {
                           fillColor: Colors.blueAccent,
                           onPressed: !answered
                               ? () {
-                                  if (questions[index]
+                                  if (Questions()
+                                      .questions[index]
                                       .answers!
                                       .values
                                       .toList()[i]) {
@@ -120,15 +117,18 @@ class _QuizzScreenState extends State<QuizzScreen> {
                                     print("no");
                                   }
                                   setState(() {
-                                    CustomDialogsCollection.showCustomSnackBar(
-                                        'Ответ принят');
+                                   
                                     btnPressed = true;
                                     answered = true;
                                   });
                                 }
                               : null,
                           child: Text(
-                            questions[index].answers!.keys.toList()[i],
+                            Questions()
+                                .questions[index]
+                                .answers!
+                                .keys
+                                .toList()[i],
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18.0,
@@ -144,7 +144,7 @@ class _QuizzScreenState extends State<QuizzScreen> {
                         text: btnText,
                         method: () async {
                           if (_controller!.page?.toInt() ==
-                              questions.length - 1) {
+                              Questions().questions.length - 1) {
                             TestResultModel.testResult = score;
                             TestResultModel.testIsDone = true;
 
@@ -166,7 +166,7 @@ class _QuizzScreenState extends State<QuizzScreen> {
                   ],
                 );
               },
-              itemCount: questions.length,
+              itemCount: Questions().questions.length,
             )),
       ),
     );

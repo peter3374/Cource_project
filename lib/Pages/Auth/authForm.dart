@@ -1,7 +1,5 @@
 // ignore_for_file: file_names
 
-import 'dart:math';
-import 'package:cAR/Pages/Menu/Menu.dart';
 import 'package:cAR/Widgets/CustomButton.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 class Auth extends StatefulWidget {
   final Function(User?) onSignIn;
-  Auth({Key? key, required this.onSignIn}) : super(key: key);
+ const  Auth({Key? key, required this.onSignIn}) : super(key: key);
 
   @override
   State<Auth> createState() => _AuthState();
@@ -25,7 +23,7 @@ class _AuthState extends State<Auth> {
     _subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-      print(result);
+     
       if (result == ConnectivityResult.none) {
         _internetRequiredDialog();
       }

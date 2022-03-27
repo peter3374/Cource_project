@@ -1,16 +1,16 @@
 // ignore_for_file: file_names
 
+import 'package:cAR/data/quizData.dart';
 import 'package:flutter/material.dart';
 
 class TaskWidget extends StatelessWidget {
   final String title;
   final String time;
-  final int  score;
+  final int score;
 
-  TaskWidget({
+  const TaskWidget({
     Key? key,
     required this.score,
-
     required this.title,
     required this.time,
   }) : super(key: key);
@@ -20,15 +20,15 @@ class TaskWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.blue,
+        color: Colors.blue.withOpacity(0.7),
         borderRadius: BorderRadius.circular(10),
       ),
       child: ListTile(
-        leading: Text(''),
+        leading: const Text(''),
         trailing: Container(
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           child: Text(
-            '$score/6',
+            '$score/${Questions().questions.length}',
             style: const TextStyle(color: Colors.white, fontSize: 17),
           ),
           decoration: BoxDecoration(

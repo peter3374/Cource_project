@@ -1,4 +1,3 @@
-import 'package:cAR/Pages/Menu/Menu.dart';
 import 'package:cAR/Widgets/CustomButton.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +28,7 @@ class PhotoAlbum extends StatelessWidget {
                       width: 350,
                       decoration: BoxDecoration(
                           image: DecorationImage(
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
                               image: ExactAssetImage(
                                   'assets/gallery/$type/${index + 1}.jpg')),
                           color: Colors.black45,

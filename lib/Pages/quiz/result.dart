@@ -1,9 +1,11 @@
 import 'dart:developer';
+
 import 'package:cAR/Pages/record_list/record_list.dart';
 import 'package:cAR/Widgets/CustomButton.dart';
 import 'package:cAR/Pages/Menu/Menu.dart';
 
 import 'package:cAR/Widgets/dialogs.dart';
+import 'package:cAR/data/quizData.dart';
 import 'package:cAR/model/testResult.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:confetti/confetti.dart';
@@ -33,11 +35,11 @@ class _ResultTestState extends State<ResultTest> {
   ];
 
   final ConfettiController _confettiController =
-      ConfettiController(duration: const Duration(milliseconds: 500));
+      ConfettiController(duration: const Duration(milliseconds: 800));
   @override
   void initState() {
     super.initState();
-    if (TestResultModel.testResult == 6) {
+    if (TestResultModel.testResult == 10) {
       _confettiController.play();
     }
     // hive
@@ -45,9 +47,8 @@ class _ResultTestState extends State<ResultTest> {
   }
 
   Future<bool> _updateUser2() async {
-    // Date now - ${DateFormat('yMd').format(DateTime.now())}
     var collection = FirebaseFirestore.instance.collection('scores');
-    // update
+
     collection
         .doc(
             '${Hive.box('user_data').get('${Hive.box('user_data').get('id')}')}')
@@ -67,16 +68,54 @@ class _ResultTestState extends State<ResultTest> {
       'name': _textEditingController.text,
       'date': DateFormat('yMd').format(DateTime.now()).toString(),
       'score': TestResultModel.testResult,
-      // 'correctedFrom': 6 - TestResultModel.testResult
     }).then((value) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Сохранено')));
-    }).catchError((error) => print('Error on push data!'));
+    });
+  }
+
+  Color _getQuizColor() {
+    switch (TestResultModel.testResult) {
+      case 0:
+        return Colors.red;
+
+      case 1:
+        return Colors.red;
+
+      case 2:
+        return Colors.red;
+
+      case 3:
+        return Colors.red;
+
+      case 4:
+        return Color.fromARGB(255, 255, 136, 0);
+
+      case 5:
+        return Colors.orangeAccent;
+
+      case 6:
+        return Color.fromARGB(255, 46, 24, 247);
+
+      case 7:
+        return Colors.purpleAccent;
+
+      case 8:
+        return Colors.purple;
+
+      case 9:
+        return Colors.greenAccent;
+
+      case 10:
+        return Colors.green;
+    }
+    return Colors.yellow;
   }
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('scores');
+    CollectionReference _users =
+        FirebaseFirestore.instance.collection('scores');
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -92,24 +131,19 @@ class _ResultTestState extends State<ResultTest> {
                 height: 30,
               ),
               SizedBox(
-                width: 100,
-                height: 120,
+                width: 150,
+                height: 170,
                 child: Card(
-                  color: TestResultModel.testResult >= 3
-                      ? Colors.green
-                      : Colors.red,
+                  color: _getQuizColor(),
                   child: Center(
                     child: Text(
-                      '${TestResultModel.testResult}',
+                      '${TestResultModel.testResult}/${Questions().questions.length}',
                       style: const TextStyle(color: Colors.white, fontSize: 40),
                     ),
                   ),
                 ),
               ),
-              const Text(
-                '/6 верно',
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SubText(
@@ -157,24 +191,52 @@ class _ResultTestState extends State<ResultTest> {
                       CustomDialogsCollection.showCustomSnackBar(
                           'Пройдите тест');
                     } else if (TestResultModel.testResult > 0) {
-// test
+                      // FirebaseFirestore.instance
+                      //     .collection('scores')
+                      //     .get()
+                      //     .then((QuerySnapshot querySnapshot) {
+                      //   for (var doc in querySnapshot.docs) {
+                      //     // update Error
+                      //     if (TestResultModel.testResult > doc['score'][0]) {
+                      //       log('upd');
+                      //       print(doc['score']);
+                      //       _updateUser2();
+                      //       // _pushData();
+                      //       CustomDialogsCollection.showCustomSnackBar(
+                      //           'Обновлено');
+                      //     } else {
+                      //       log('push');
+                      //       _pushData();
+                      //     }
+                      //   }
+
+                      // });
                       FirebaseFirestore.instance
                           .collection('scores')
+                          .doc(
+                              '${Hive.box('user_data').get('${Hive.box('user_data').get('id')}')}')
                           .get()
-                          .then((QuerySnapshot querySnapshot) {
-                        querySnapshot.docs.forEach((doc) {
-                          // print(doc["score"]);
-                          if (doc['score'] < TestResultModel.testResult) {
-                            _updateUser2();
-                            CustomDialogsCollection.showCustomSnackBar(
-                                'Обновлено');
-                          } else {
-                            //     log('not updated! code line 177');
-                            log('Pushing data');
-                            _pushData();
-                          }
-                        });
+                          .then((doc) {
+                        if (!doc.exists) {
+                          log('push');
+                          _pushData();
+                        } else {
+                          log('upd');
+                          _updateUser2();
+                        }
                       });
+
+                      // if (FirebaseFirestore.instance.collection('scores').doc(
+                      //         '${Hive.box('user_data').get('${Hive.box('user_data').get('id')}')}') ==
+                      //     null) {
+                      //   // push
+                      //   log('push');
+                      //   _pushData();
+                      // } else {
+                      //   //upd
+                      //   log('upd');
+                      //   _updateUser2();
+                      // }
                     }
                   },
                   icon: Icons.done_sharp),
@@ -254,37 +316,57 @@ class SubText extends StatelessWidget {
     switch (result) {
       case 0:
         return const Text(
-          'Вы достигли дна',
+          'Пустота 💀',
           style: TextStyle(color: Colors.white, fontSize: 17),
         );
       case 1:
         return const Text(
-          'Ужасно',
+          'Шутишь? 🤨',
           style: TextStyle(color: Colors.white, fontSize: 17),
         );
       case 2:
         return const Text(
-          'Плохо...',
+          'Плохо 😠',
           style: TextStyle(color: Colors.white, fontSize: 17),
         );
       case 3:
         return const Text(
-          'Средненько',
+          'Как так? 😑',
           style: TextStyle(color: Colors.white, fontSize: 17),
         );
       case 4:
         return const Text(
-          'Неплохо',
+          'Учись и давай еще раз 😏',
           style: TextStyle(color: Colors.white, fontSize: 17),
         );
       case 5:
         return const Text(
-          'Хорошо',
+          'Середина? 😌',
           style: TextStyle(color: Colors.white, fontSize: 17),
         );
       case 6:
         return const Text(
-          'Заметачельно!',
+          'Заметачельно!😏',
+          style: TextStyle(color: Colors.white, fontSize: 17),
+        );
+      case 7:
+        return const Text(
+          'Почти идеально😉',
+          style: TextStyle(color: Colors.white, fontSize: 17),
+        );
+      case 8:
+        return const Text(
+          'Знания есть 🙂',
+          style: TextStyle(color: Colors.white, fontSize: 17),
+        );
+      case 9:
+        return const Text(
+          'Вау 😎',
+          style: TextStyle(color: Colors.white, fontSize: 17),
+        );
+      case 10:
+        return const Text(
+          'Самый умный 🤓',
           style: TextStyle(color: Colors.white, fontSize: 17),
         );
     }

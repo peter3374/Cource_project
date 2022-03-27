@@ -14,8 +14,6 @@ import 'package:cAR/Pages/Menu/TurnOff.dart';
 import 'package:cAR/Pages/User/user.dart';
 import 'package:cAR/Pages/quiz/Quiz.dart';
 
-import 'package:cAR/Widgets/dialogs.dart';
-
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wiredash/wiredash.dart';
 import 'package:device_apps/device_apps.dart';
@@ -53,9 +51,7 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
 
     _controller.forward(); // run animation
 
-    int appRunnedTimes = Hive.box('user_data').get('appRunned') ?? 0;
-    appRunnedTimes += 1;
-    Hive.box('user_data').put('appRunned', appRunnedTimes);
+    
 
     _getARModule();
     _getARServives();
@@ -99,33 +95,27 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
               // _showDialog();
 
               DeviceApps.openApp('com.NoStudio.ColledgeAR');
-              log('new index: $_changedIndex');
 
               break;
             case 1:
-              int photoRunned = Hive.box('user_data').get('photoRunned') ?? 0;
-              photoRunned++;
-              Hive.box('user_data').put('testRunned', photoRunned);
-
               setState(() {
                 _imagePath = 'gallery';
                 _floatIconColor = MenuColors().mainColor[1];
               });
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) =>const PhotoGallery()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const PhotoGallery()));
               break;
             case 2:
               int testRunned = Hive.box('user_data').get('testRunned') ?? 0;
               testRunned++;
               Hive.box('user_data').put('testRunned', testRunned);
-              log('record list');
 
               setState(() {
                 _imagePath = 'quiz';
                 _floatIconColor = MenuColors().mainColor[2];
               });
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) =>const QuizzScreen()));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const QuizzScreen()));
               break;
             case 3:
               setState(() {
@@ -140,8 +130,8 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                 _imagePath = 'stats';
                 _floatIconColor = MenuColors().mainColor[4];
               });
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) => const UserProfile()));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const UserProfile()));
               break;
           }
         },
@@ -211,7 +201,6 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
                   onSelectedItemChanged: ((value) {
                     setState(() {
                       _changedIndex = value;
-                      log('$_changedIndex');
                     });
                     switch (_changedIndex) {
                       case 0:
@@ -228,7 +217,6 @@ class _MenuState extends State<Menu> with TickerProviderStateMixin {
 
                         break;
                       case 2:
-                      
                         setState(() {
                           _imagePath = 'quiz';
                           _floatIconColor = MenuColors().mainColor[2];
